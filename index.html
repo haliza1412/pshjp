@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard PSH — Jabatan Perdagangan PTSB 2027</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-logo-wrap">
+    <img src="logo-ptsb.png" alt="Logo PTSB" class="header-logo-img" />
+  </div>
+  <div class="header-center">
+    <div class="header-title">🎓 Dashboard Pembelajaran Sepanjang Hayat (PSH)</div>
+    <div class="header-sub">Jabatan Perdagangan &nbsp;|&nbsp; Politeknik Tuanku Sultanah Bahiyah (PTSB)</div>
+    <div class="header-badge-inline">📅 Tahun 2027</div>
+  </div>
+  <div class="header-logo-wrap header-logo-right">
+    <img src="logo-jp.jpg" alt="Logo JP" class="header-logo-img" />
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     KANDUNGAN UTAMA
+══════════════════════════════════════════════════════════ -->
+<main class="container">
+
+  <!-- KPI RUJUKAN 2025 & 2026 -->
+  <div class="kpi-rujukan-panel">
+    <p class="section-title">📊 Sasaran KPI PSH — Rujukan Tahun Lepas</p>
+    <div class="kpi-rujukan-grid">
+      <div class="kpi-rujukan-card">
+        <div class="kpi-rujukan-label">🗓️ KPI PSH 2025</div>
+        <img src="kpi-2025.png" alt="KPI PSH 2025" class="kpi-rujukan-img" />
+        <div class="kpi-rujukan-overlay" onclick="bukaLightbox('kpi-2025.png', 'KPI PSH 2025')">🔍 Klik untuk besarkan</div>
+      </div>
+      <div class="kpi-rujukan-card">
+        <div class="kpi-rujukan-label">🗓️ KPI PSH 2026</div>
+        <img src="kpi-2026.png" alt="KPI PSH 2026" class="kpi-rujukan-img" />
+        <div class="kpi-rujukan-overlay" onclick="bukaLightbox('kpi-2026.png', 'KPI PSH 2026')">🔍 Klik untuk besarkan</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="tutupLightbox()">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <button class="lightbox-close" onclick="tutupLightbox()">✕</button>
+      <div class="lightbox-title" id="lightbox-title"></div>
+      <img class="lightbox-img" id="lightbox-img" src="" alt="" />
+    </div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <p class="section-title">📋 Ringkasan Keseluruhan</p>
+  <div class="kpi-grid">
+    <div class="kpi-card blue">
+      <div class="kpi-icon">📋</div>
+      <div class="kpi-value" id="kpi-program-total">—</div>
+      <div class="kpi-label">Jumlah Program</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-icon">✅</div>
+      <div class="kpi-value" id="kpi-selesai">—</div>
+      <div class="kpi-label">Program Selesai</div>
+    </div>
+    <div class="kpi-card indigo">
+      <div class="kpi-icon">🔄</div>
+      <div class="kpi-value" id="kpi-berjalan">—</div>
+      <div class="kpi-label">Sedang Berjalan</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-icon">📆</div>
+      <div class="kpi-value" id="kpi-dirancang">—</div>
+      <div class="kpi-label">Dirancang</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-icon">❌</div>
+      <div class="kpi-value" id="kpi-batal">—</div>
+      <div class="kpi-label">Dibatalkan</div>
+    </div>
+    <div class="kpi-card teal">
+      <div class="kpi-icon">👥</div>
+      <div class="kpi-value" id="kpi-peserta">—</div>
+      <div class="kpi-label">Jumlah Peserta</div>
+    </div>
+  </div>
+
+  <!-- YURAN PANEL -->
+  <div class="yuran-panel">
+    <p class="section-title">Kutipan Yuran 2027</p>
+    <div class="yuran-row">
+      <div class="yuran-item sasaran">
+        <label>Sasaran Yuran</label>
+        <div class="val" id="kpi-sasaran">—</div>
+      </div>
+      <div class="yuran-item sebenar">
+        <label>Kutipan Sebenar</label>
+        <div class="val" id="kpi-kutipan">—</div>
+      </div>
+      <div class="yuran-item peratus">
+        <label>Peratus Capai</label>
+        <div class="val" id="kpi-peratus-yuran">—</div>
+      </div>
+      <div class="yuran-item tunggak">
+        <label>Tunggakan</label>
+        <div class="val" id="kpi-tunggakan">—</div>
+      </div>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar" id="progress-yuran" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- CARTA: STATUS + PESERTA -->
+  <div class="carta-grid">
+    <div class="carta-card">
+      <p class="section-title">Status Program</p>
+      <div class="carta-wrap">
+        <canvas id="cartaStatus"></canvas>
+      </div>
+    </div>
+    <div class="carta-card">
+      <p class="section-title">Bilangan Peserta per Program</p>
+      <div class="carta-wrap" style="height:280px">
+        <canvas id="cartaPeserta"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARTA: TREND + YURAN -->
+  <div class="carta-grid-2">
+    <div class="carta-card">
+      <p class="section-title">Trend Bulanan 2027 — Peserta & Yuran</p>
+      <div class="carta-wrap" style="height:220px">
+        <canvas id="cartaTrend"></canvas>
+      </div>
+    </div>
+    <div class="carta-card">
+      <p class="section-title">Sasaran vs Kutipan Yuran</p>
+      <div class="carta-wrap" style="height:220px">
+        <canvas id="cartaYuran"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIJIL PANEL -->
+  <div class="carta-card" style="margin-bottom:28px">
+    <p class="section-title">Status Sijil</p>
+    <div class="sijil-grid">
+      <div class="sijil-box ok">
+        <div>
+          <div class="sijil-num" id="kpi-sijil-keluar">—</div>
+          <div class="kpi-label">Sijil Dikeluarkan</div>
+          <div class="sijil-desc">Peserta yang telah menerima sijil tamat kursus</div>
+        </div>
+        <span style="font-size:40px;margin-left:auto">🎓</span>
+      </div>
+      <div class="sijil-box pending">
+        <div>
+          <div class="sijil-num" id="kpi-sijil-belum">—</div>
+          <div class="kpi-label">Sijil Belum Dikeluarkan</div>
+          <div class="sijil-desc">Sedang diproses atau menunggu kelulusan</div>
+        </div>
+        <span style="font-size:40px;margin-left:auto">⏳</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- JADUAL PROGRAM -->
+  <div class="jadual-panel">
+    <div class="jadual-header">
+      <p class="section-title">📋 Senarai Program PSH 2027</p>
+      <div class="filter-wrap">
+        <button class="btn-filter aktif" data-filter="Semua">Semua</button>
+        <button class="btn-filter" data-filter="Selesai">✅ Selesai</button>
+        <button class="btn-filter" data-filter="Berjalan">🔄 Berjalan</button>
+        <button class="btn-filter" data-filter="Dirancang">📆 Dirancang</button>
+        <button class="btn-filter" data-filter="Dibatalkan">❌ Dibatalkan</button>
+      </div>
+      <input class="cari-input" id="input-cari" type="text" placeholder="🔍 Cari program..." />
+      <button class="btn-action btn-export" id="btn-export">⬇ Export CSV</button>
+      <button class="btn-action btn-cetak" id="btn-cetak">🖨 Cetak</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>ID Program</th>
+            <th>Nama Program</th>
+            <th>Kategori</th>
+            <th style="text-align:center">Status</th>
+            <th style="text-align:center">Peserta / Kapasiti</th>
+            <th style="text-align:right">Kutipan Yuran</th>
+            <th style="text-align:center">Sijil (Keluar/Jumlah)</th>
+            <th>Tempoh</th>
+          </tr>
+        </thead>
+        <tbody id="jadual-body">
+          <tr><td colspan="8" style="text-align:center;padding:24px;color:#94a3b8">Memuatkan data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-logos">
+      <img src="logo-ptsb.png" alt="PTSB" class="footer-logo-img" />
+      <img src="logo-jp.jpg" alt="JP" class="footer-logo-img" />
+    </div>
+    <p>Dashboard PSH — Jabatan Perdagangan, Politeknik Tuanku Sultanah Bahiyah (PTSB) &copy; 2027</p>
+    <p style="margin-top:4px">Data dikemaskini secara manual melalui fail <code>js/data.js</code></p>
+  </div>
+
+</main>
+
+<script src="data.js"></script>
+<script src="charts.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
